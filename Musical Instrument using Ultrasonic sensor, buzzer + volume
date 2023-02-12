@@ -1,0 +1,107 @@
+//musical instrument for HC-SR04 (4 pin) Ultrasonic Sensor + Buzzer & Volume Control
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop()
+{
+
+int knobValue= analogRead(A0);
+
+byte pwm = map(knobValue,0,1024,0,125);
+
+Serial.print(knobValue);
+
+Serial.print("-");
+
+Serial.println(pwm);
+
+analogWrite(11, pwm);
+
+delay (1);
+
+digitalWrite(2, HIGH);
+  long duration, inches, cm;
+
+  pinMode(2, OUTPUT);// attach pin 2 to Trig
+  digitalWrite(2, LOW);
+  delayMicroseconds(2);
+  digitalWrite(2, HIGH);
+  delayMicroseconds(5);
+  digitalWrite(2, LOW);
+
+  pinMode (4, INPUT);//attach pin 4 to Echo
+  duration = pulseIn(4, HIGH);
+
+  inches = microsecondsToInches(duration);
+  cm = microsecondsToCentimeters(duration);
+ 
+  Serial.print(inches);
+  Serial.print("in, ");
+  Serial.print(cm);
+  Serial.print("cm");
+  Serial.println();
+ 
+  delay(100);
+  
+  int toneToPlay = 0;
+  
+  if(cm <= 16 && cm > 14)
+  {
+     toneToPlay = 523; 
+  }
+  if(cm <= 14 && cm > 12)
+  {
+     toneToPlay = 493; 
+  }
+  if(cm <= 12 && cm > 10)
+  {
+     toneToPlay = 440; 
+  }
+  if(cm <= 10 && cm > 8)
+  {
+     toneToPlay = 392; 
+  }
+  if(cm <= 8 && cm > 6)
+  {
+     toneToPlay = 349; 
+  }
+  if(cm <= 6 && cm > 4)
+  {
+     toneToPlay = 329; 
+  }
+  if(cm <= 4 && cm > 2)
+  {
+     toneToPlay = 294; 
+  }
+  if(cm <= 2)
+  {
+     toneToPlay = 261; 
+  }
+  
+  if (toneToPlay == 0)
+  {
+    noTone(11);
+  }
+  else
+  {
+    tone(11, toneToPlay, 200);
+  }
+  
+  
+  delay(100);
+}
+
+long microsecondsToInches(long microseconds)
+{
+  
+   return microseconds / 74 / 2;
+}
+
+long microsecondsToCentimeters(long microseconds)
+{
+
+  return microseconds / 29 / 2;
+
+}
